@@ -1,0 +1,72 @@
+#!/usr/bin/env python3
+import requests
+import sys
+
+facebookData = []
+instagramData = []
+githubData = []
+linkedInData = []
+youtubeData = []
+freeData = []
+allData = []
+
+
+def argsError():
+    print("    Error | The app excepts one argument:")
+    print("   ./main [name]")
+    exit(1)
+
+
+def getArgs():
+    return sys.argv[1] if len(sys.argv) == 2 else argsError()
+
+
+def splitToArrays(link: str):
+    global facebookData, instagramData, githubData, linkedInData, youtubeData, freeData, allData
+    if "facebook" in link:
+        facebookData.append(link)
+    elif "instagram" in link:
+        instagramData.append(link)
+    elif "github" in link:
+        githubData.append(link)
+    elif "linkedin" in link:
+        linkedInData.append(link)
+    elif "youtube" in link:
+        youtubeData.append(link)
+    else:
+        freeData.append(link)
+    allData.append(link)
+
+
+query = getArgs()
+base = "https://google.com/search?q="
+url = base + f'"{query}"'
+res = requests.get(url)
+res.raise_for_status()
+text = res.text
+x = text.split('<a href="')
+for l in x:
+    l = l.split('"')[0]
+    if (not l.startswith("/url")) or "google" in l:
+        continue
+    l = l[l.index("=")+1:l.index(";")][:-4]
+    splitToArrays(l)
+
+print("Github Links >> ")
+for l in githubData:
+    print(l)
+print("Linked In Links >> ")
+for l in linkedInData:
+    print(l)
+print("Facebook Links >> ")
+for l in facebookData:
+    print(l)
+print("Instagram Links >> ")
+for l in instagramData:
+    print(l)
+print("Youtube Links >> ")
+for l in youtubeData:
+    print(l)
+print("Unsorted Links >> ")
+for l in allData:
+    print(l)
